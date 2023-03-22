@@ -32,17 +32,6 @@ userSchema.virtual("notes", {
   localField: "_id",
   foreignField: "owner"
 });
-
-userSchema.method.toJSON = function () {
-  const user = this;
-  const userObject = user.toObject();
-
-  delete userObject.password;
-  delete userObject.name
-  
-  return userObject
-}
-
 userSchema.pre('save', async function(next) {
   // 'this' is the user document
   if (!this.isModified('password')) return next();

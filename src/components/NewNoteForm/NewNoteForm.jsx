@@ -1,33 +1,35 @@
 import { useState } from 'react';
+import * as notesApi from "../../utilities/notes-api"
 
-export default function NewNoteForm({ user }) {
-  const [noteText, setNoteText] = useState('');
+
+
+export default function NewNoteForm({ user, notes, setNotes }) {
+  const [noteText, setNoteText] = useState({content:""});
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    const newNote = { text: noteText, user: user._id }; // add user ID to note data
-    const response = await fetch('/api/notes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newNote),
+    const newNote = await notesApi.createNote({
+      content: noteText.content,
+      owner: user._id
     });
-    const data = await response.json();
-    console.log('New note:', data);
-    // clear the input field
-    setNoteText('');
+    setNotes([...notes, newNote]);
+    setNoteText({ content: "" });
   };
+
+  const handleChange = async (event) => {
+    const note = {...noteText, [event.target.name]:event.target.value}
+    setNoteText(note)
+  }
   
 
   return (
     <form onSubmit={handleSubmit}>
       <input
+        name = "content"
         type="text"
         placeholder="Enter note text"
-        value={noteText}
-        onChange={(event) => setNoteText(event.target.value)}
+        value={noteText.content || ""}
+        onChange={handleChange}
       />
       <button type="submit">Add Note</button>
     </form>

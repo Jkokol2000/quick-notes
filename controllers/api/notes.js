@@ -8,11 +8,9 @@ module.exports = {
   };
 
 async function create (req,res) {
-    const note = new Note({
-        ...req.body,
-        owner: req.user._id
-    })
-
+    console.log(req.body)
+    req.body.owner = req.user._id
+    const note = new Note(req.body)
     try {
         await note.save()
         res.status(201).send({
@@ -20,17 +18,12 @@ async function create (req,res) {
         })
     } catch (e) {
         res.status(500).send(e)
-    }
+    } 
 }
 
 async function getNotes(req, res) {
-    try {
-        await req.user.populate("notes")
-
-        res.status(200).send(req.user.notes)
-    } catch (e) {
-        res.status(500).send(e)
-    }
+  const notes = await Note.find({owner:req.user._id})
+  res.json(notes)
 }
 
 async function getSingleNote(req, res) {
@@ -39,7 +32,7 @@ async function getSingleNote(req, res) {
         if(!note){
             return res.status(404).send()
         }
-        res.send(note)
+        res.sen(note)
     } catch(e){
         res.status(500), send(e);
     }
