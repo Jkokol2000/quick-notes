@@ -3,23 +3,25 @@ import * as notesApi from "../../utilities/notes-api"
 
 
 
-export default function NewNoteForm({ user, notes, setNotes }) {
+export default function NewNoteForm({ user, handleNoteSubmit }) {
   const [noteText, setNoteText] = useState({content:""});
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const newNote = await notesApi.createNote({
-      content: noteText.content,
-      owner: user._id
-    });
-    setNotes([...notes, newNote]);
-    setNoteText({ content: "" });
-  };
 
   const handleChange = async (event) => {
     const note = {...noteText, [event.target.name]:event.target.value}
     setNoteText(note)
   }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    handleNoteSubmit(noteText)
+/*const newNote = await notesApi.createNote({
+      content: noteText.content,
+      owner: user._id
+    });
+    setNotes([...notes, newNote]);
+    setNoteText({ content: "" });*/
+  };
+
   
 
   return (
@@ -30,8 +32,8 @@ export default function NewNoteForm({ user, notes, setNotes }) {
         placeholder="Enter note text"
         value={noteText.content || ""}
         onChange={handleChange}
-      />
-      <button type="submit">Add Note</button>
+        />
+       <button type="submit">Add Note</button>
     </form>
   );
 }
