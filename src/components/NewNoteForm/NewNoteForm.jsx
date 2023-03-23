@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import * as notesApi from "../../utilities/notes-api"
 
 
 
-export default function NewNoteForm({ user, handleNoteSubmit }) {
+export default function NewNoteForm({ handleNoteSubmit }) {
   const [noteText, setNoteText] = useState({content:""});
 
 

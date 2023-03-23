@@ -9,27 +9,52 @@ import * as notesApi from '../../utilities/notes-api';
 export default function App() {
   const [user, setUser] = useState(getUser());
   const [notes, setNotes] = useState([]);
+  const [sortBy, setSortBy] = useState('desc')
   
   useEffect(() => {
     async function getAllNotes() {
       const allNotes = await notesApi.getAll();
       setNotes(allNotes);
     }
-    getAllNotes();
-  }, []);
+    if(user){
+      getAllNotes();
+    } 
+  }, [user]);
 
   const handleNoteSubmit = async (noteContent) => {
-    console.log(noteContent)
     const newNote = await notesApi.createNote(noteContent);
     setNotes([...notes, newNote.note]);
   };
+
+  const sortedNotes = [...notes].sort((a,b) => {
+    if (sortBy === 'asc') {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    } else {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+  })
+
+async function deleteNote(note) {
+  const deletedNote = await notesApi.deleteNote(note)
+  const updatedNotes = notes.filter((n) => n._id !== deletedNote._id)
+  setNotes(updatedNotes)
+}
+
+  const handleSortToggle = () => {
+    if (sortBy === 'asc') {
+      setSortBy('desc');
+    } else {
+      setSortBy('asc')
+    }
+  }
 
   return (
     <main className="App">
       {user ? (
         <>
-          <NavBar user={user} setUser={setUser} />
+          <NavBar user={user} notes={notes} setUser={setUser} />
           <div>
+          <button onClick={handleSortToggle}>Toggle Sort Order</button>
             <NewNoteForm
               user={user}
               handleNoteSubmit={handleNoteSubmit}
@@ -37,10 +62,12 @@ export default function App() {
             {notes.length === 0 ? (
               <p>No notes yet!</p>
             ) : (
-              notes.map((note, idx) => (
-                <p key={idx}>
-                  {note.content}
+              sortedNotes.map((note, idx) => (
+                <div key={idx}>
+                <p>
+                  {note.content} - {note.createdAt} - <button onClick={() => deleteNote(note._id)}>Delete</button>
                 </p>
+                </div>
               ))
             )}
           </div>

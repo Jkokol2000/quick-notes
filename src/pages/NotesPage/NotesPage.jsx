@@ -3,6 +3,7 @@ import NewNoteForm from "../../components/NewNoteForm/NewNoteForm";
 export default function NotesPage({notes, userId, setNotes}) {
   console.log(userId)
   const userNotes = notes.filter(note => note.owner === userId._id);
+  console.log(userNotes)
   if (userNotes.length === 0) {
     return <p>No notes yet!</p>
   }

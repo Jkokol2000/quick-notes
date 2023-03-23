@@ -8,3 +8,8 @@ export async function createNote(userData) {
 export async function getAll() {
     return sendRequest(BASE_URL)
 }
+
+export async function deleteNote(note) {
+    console.log(note)
+    return sendRequest(`${BASE_URL}/${note}`, 'DELETE')
+}

@@ -3,7 +3,6 @@ const Note = require('../../models/notes')
 module.exports = {
     create,
     getNotes,
-    getSingleNote,
     delete: deleteNote
   };
 
@@ -26,27 +25,10 @@ async function getNotes(req, res) {
   res.json(notes)
 }
 
-async function getSingleNote(req, res) {
-    try {
-        const note = await Note.findById({ _id: req.params.id})
-        if(!note){
-            return res.status(404).send()
-        }
-        res.sen(note)
-    } catch(e){
-        res.status(500), send(e);
-    }
-}
-
 async function deleteNote(req, res) {
     try {
         const note = await Note.findOneAndDelete({ _id: req.params.id})
-        
-        if(!note) {
-            return res.status(404).send()
-        }
-
-        res.send({message: "Note was deleted"})
+        res.json(note)
     } catch (e) {
         res.status(500).send(e)
     }
